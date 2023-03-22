@@ -51,8 +51,14 @@ void simpleHighway(pcl::visualization::PCLVisualizer::Ptr& viewer)
     // Scan the environment and render the scan rays into the scene.
     pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud = lidar->scan();
     //renderRays(viewer, lidar->position, pointCloud);
-    // Then render the point cloud of the scan
-    renderPointCloud(viewer, pointCloud, "Point Cloud");
+    // Render the point cloud of the scan
+    //renderPointCloud(viewer, pointCloud, "Point Cloud");
+
+    // Segment the point cloud into obstacles and ground plane points, then render them.
+    ProcessPointClouds<pcl::PointXYZ> pointProcessor;
+    std::pair<pcl::PointCloud<pcl::PointXYZ>::Ptr, pcl::PointCloud<pcl::PointXYZ>::Ptr> segmentedCloud = pointProcessor.SegmentPlane(pointCloud, 100, 0.2);
+    renderPointCloud(viewer, segmentedCloud.first, "ObstacleCloud", Color(1,0,0));
+    renderPointCloud(Viewer, segmentedCloud.second, "PlaneCloud", Color(0,1,0));
 }
 
 
